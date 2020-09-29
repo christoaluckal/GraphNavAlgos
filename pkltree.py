@@ -17,8 +17,8 @@ final_coords_list = np.array(coords_list)
 x_coords,y_coords = zip(*final_coords_list)
 
 #Show the full "map"
-plt.scatter(x_coords,y_coords)
-plt.show()
+# plt.scatter(x_coords,y_coords,s=0.1)
+# plt.show()
 
 
 start_s = time.time()
@@ -34,11 +34,15 @@ print("Enter the current position X")
 current_posx = int(input())
 print("Enter the current position Y")
 current_posy = int(input()) 
-print("Press WASD to move or press E to exit\n")
+print("Enter zoom amount [Higher number is less zoom :)]")
+zoom = int(input())
+print("Enter step size:")
+step_size = int(input())
+print("Press WASD to move, X for step-size or press E to exit\n")
 while True:
     start_s = time.time()
     #Query point is the current location with a radius set to 10 unit distance. Change 10 to whatever is desired
-    coords = kdtree.query_ball_point([current_posx,current_posy],r=100)
+    coords = kdtree.query_ball_point([current_posx,current_posy],r=zoom)
     end_s = time.time()
     #final_coords_list[coords] is a list of coordinate pairs that fall inside the specified distance
     point_list = final_coords_list[coords]
@@ -46,7 +50,7 @@ while True:
     if len(point_list) is not 0:
         # Split the coords terms to X and Y coordinates
         plot_x,plot_y = zip(*final_coords_list[coords])
-        plt.scatter(plot_x,plot_y)
+        plt.scatter(plot_x,plot_y,s=0.01)
         plt.show()
     else:
         print("Skipped at:",str(current_posx)," ",str(current_posy))
@@ -54,14 +58,18 @@ while True:
     #Current position
     next_dir = input()
     if next_dir == 'w':
-        current_posy = current_posy + 20
+        current_posy = current_posy + step_size
     elif next_dir == 'a':
-        current_posx = current_posx - 20
+        current_posx = current_posx - step_size
     elif next_dir == 's':
-        current_posy = current_posy - 20
+        current_posy = current_posy - step_size
     elif next_dir == 'd':
-        current_posx = current_posx + 20
+        current_posx = current_posx + step_size
+    elif next_dir == 'z':
+        zoom = int(input("Change zoom: "))
     elif next_dir == 'e':
         break
+    elif next_dir == 'x':
+        step_size = int(input())
     else:
         pass
